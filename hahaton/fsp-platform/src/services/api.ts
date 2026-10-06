@@ -1,0 +1,97 @@
+import type { Candidate, JobOffer } from '../types';
+import { MOCK_CANDIDATES } from '../data/mockCandidates';
+import { INITIAL_OFFERS } from '../data/mockOffers';
+
+// ФЛАГ ПЕРЕКЛЮЧЕНИЯ: когда бэкендер поднимет сервер, меняем на true
+export const USE_REAL_BACKEND = false;
+export const API_BASE_URL = 'http://localhost:8000/api';
+
+export const api = {
+  // 1. Получение каталога кандидатов с фильтрами
+  async getCandidates(params?: Record<string, any>): Promise<Candidate[]> {
+    if (!USE_REAL_BACKEND) {
+      return Promise.resolve(MOCK_CANDIDATES);
+    }
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE_URL}/candidates${query ? `?${query}` : ''}`);
+    if (!res.ok) throw new Error('Не удалось получить список кандидатов');
+    return res.json();
+  },
+
+  // 2. Отправка прямого оффера (Обратный найм)
+  async sendOffer(offerData: Omit<JobOffer, 'id' | 'status' | 'sentAt'>): Promise<JobOffer> {
+    if (!USE_REAL_BACKEND) {
+      const mockOffer: JobOffer = {
+        ...offerData,
+        id: `off-${Date.now()}`,
+        status: 'pending',
+        sentAt: 'Только что'
+      };
+      return Promise.resolve(mockOffer);
+    }
+    const res = await fetch(`${API_BASE_URL}/offers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(offerData)
+    });
+    if (!res.ok) throw new Error('Ошибка отправки оффера');
+    return res.json();
+  },
+
+  // 3. Изменение статуса оффера (Принять / Отклонить)
+  async updateOfferStatus(offerId: string, status: 'accepted' | 'declined'): Promise<{ status: string }> {
+    if (!USE_REAL_BACKEND) {
+      return Promise.resolve({ status });
+    }
+    const res = await fetch(`${API_BASE_URL}/offers/${offerId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (!res.ok) throw new Error('Ошибка обновления статуса');
+    return res.json();
+  },
+
+  // 4. Смарт-подбор по потребности команды (35% ТЗ)
+  async smartMatch(need: {
+    teamName: string;
+    description: string;
+    targetCategory: string;
+    requiredStack: string[];
+    salaryMin: number;
+    salaryMax: number;
+  }): Promise<{ candidates: (Candidate & { smartScore: number })[] }> {
+    if (!USE_REAL_BACKEND) {
+      return Promise.resolve({
+        candidates: MOCK_CANDIDATES.map(c => ({
+          ...c,
+          smartScore: 95
+        }))
+      });
+    }
+    const res = await fetch(`${API_BASE_URL}/recruiter/smart-match`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(need)
+    });
+    if (!res.ok) throw new Error('Ошибка смарт-подбора');
+    return res.json();
+  },
+
+  // 5. Симуляция запроса к реестру ФСП
+  async syncFsp(candidateId: string): Promise<{ success: boolean; message: string }> {
+    if (!USE_REAL_BACKEND) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            success: true,
+            message: 'Разряд Мастера Спорта и протоколы турниров подтверждены в реестре ФСП'
+          });
+        }, 1000);
+      });
+    }
+    const res = await fetch(`${API_BASE_URL}/fsp/sync/${candidateId}`, { method: 'POST' });
+    if (!res.ok) throw new Error('Ошибка синхронизации с ФСП');
+    return res.json();
+  }
+};
