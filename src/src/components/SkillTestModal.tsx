@@ -130,13 +130,13 @@ export const SkillTestModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-xl animate-in fade-in duration-200 text-left font-sans">
-      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-3xl glass-panel border border-cyber-border shadow-2xl p-6 sm:p-8 text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-obsidian-950/85 backdrop-blur-2xl animate-in fade-in duration-200 text-left font-sans">
+      <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-3xl glass-panel border border-crimson-500/30 shadow-2xl p-6 sm:p-8 text-left bg-gradient-to-b from-obsidian-900/90 via-obsidian-950/95 to-black">
         
         {/* Кнопка закрытия */}
         <button
           onClick={closeTestModal}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-cyber-subcard hover:bg-cyber-card text-slate-400 hover:text-white border border-cyber-border transition-all"
+          className="absolute top-5 right-5 p-2.5 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 text-slate-400 hover:text-white border border-obsidian-700/60 transition-all duration-200"
         >
           <X className="w-5 h-5" />
         </button>
@@ -145,21 +145,21 @@ export const SkillTestModal: React.FC = () => {
         {step === 'setup' && (
           <div className="space-y-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/40 text-neon-cyan text-xs font-mono mb-2">
-                <Sparkles className="w-3.5 h-3.5" /> ВХОДНОЕ ТЕСТИРОВАНИЕ • ТЗ СТР. 2-3
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-500/10 border border-crimson-500/40 text-crimson-400 text-xs font-mono mb-2 shadow-glow-crimson/20">
+                <Sparkles className="w-3.5 h-3.5 text-crimson-400 animate-pulse" /> ВХОДНОЕ ТЕСТИРОВАНИЕ • ТЗ СТР. 2-3
               </div>
-              <h2 className="text-2xl font-extrabold text-white">
+              <h2 className="text-2xl font-black text-white tracking-wide">
                 Подтверждение грейда и присвоение Категории
               </h2>
-              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+              <p className="text-xs text-slate-300 mt-1 leading-relaxed">
                 На платформе FSP.SCOUT грейд не берется из резюме. Для появления в каталоге работодателей пройдите профильный квалификационный срез.
               </p>
             </div>
 
             {/* Защита от утечки заданий (Важно для 25% ТЗ) */}
-            <div className="p-4 rounded-2xl bg-cyber-subcard/80 border border-neon-cyan/30 text-xs text-slate-300 space-y-1 font-mono">
-              <span className="text-neon-cyan font-bold flex items-center gap-1.5">
-                <Code2 className="w-4 h-4" /> Anti-Leak Protection v2.4 (ФСП)
+            <div className="p-4 rounded-2xl bg-obsidian-850/80 border border-crimson-500/30 text-xs text-slate-300 space-y-1 font-mono">
+              <span className="text-crimson-400 font-bold flex items-center gap-1.5">
+                <Code2 className="w-4 h-4 text-crimson-400" /> Anti-Leak Protection v2.4 (ФСП)
               </span>
               <p className="text-[11px] text-slate-400">
                 Задания генерируются динамически с подменой входных структур данных и параметров асимптотики. Публикация ответов не дает преимуществ.
@@ -168,10 +168,10 @@ export const SkillTestModal: React.FC = () => {
 
             {/* Специализация */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 tracking-wider">
                 1. Выберите профильную специализацию:
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {[
                   'Бэкенд и распределенные системы',
                   'Системы ИИ и большие данные',
@@ -182,10 +182,10 @@ export const SkillTestModal: React.FC = () => {
                     key={spec}
                     type="button"
                     onClick={() => setSelectedSpecialization(spec)}
-                    className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
+                    className={`p-3 rounded-xl border text-xs font-medium text-left transition-all duration-200 ${
                       selectedSpecialization === spec
-                        ? 'bg-cyber-card border-neon-cyan text-white shadow-glow-cyan font-bold'
-                        : 'bg-cyber-subcard border-cyber-border text-slate-400 hover:text-white'
+                        ? 'bg-crimson-950/60 border-crimson-500 text-white shadow-glow-crimson font-bold'
+                        : 'bg-obsidian-850 border-obsidian-700/60 text-slate-400 hover:text-white hover:border-obsidian-600'
                     }`}
                   >
                     {spec}
@@ -196,7 +196,7 @@ export const SkillTestModal: React.FC = () => {
 
             {/* Целевой грейд */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 tracking-wider">
                 2. Заявляемый уровень квалификации (Грейд):
               </label>
               <div className="flex flex-wrap gap-2">
@@ -205,10 +205,10 @@ export const SkillTestModal: React.FC = () => {
                     key={grade}
                     type="button"
                     onClick={() => setSelectedGrade(grade)}
-                    className={`px-4 py-2 rounded-xl border text-xs font-mono transition-all ${
+                    className={`px-4 py-2 rounded-xl border text-xs font-mono transition-all duration-200 ${
                       selectedGrade === grade
-                        ? 'bg-fsp-gold/20 border-fsp-gold text-fsp-gold font-bold shadow-glow-gold'
-                        : 'bg-cyber-subcard border-cyber-border text-slate-400 hover:text-white'
+                        ? 'bg-fsp-gold/20 border-fsp-gold text-fsp-gold font-bold shadow-glow-gold/20'
+                        : 'bg-obsidian-850 border-obsidian-700/60 text-slate-400 hover:text-white hover:border-obsidian-600'
                     }`}
                   >
                     {grade}
@@ -218,14 +218,14 @@ export const SkillTestModal: React.FC = () => {
             </div>
 
             {/* Правило кулдауна из ТЗ */}
-            <div className="text-[11px] font-mono text-slate-500 pt-2 border-t border-cyber-border flex items-center justify-between">
+            <div className="text-[11px] font-mono text-slate-400 pt-2 border-t border-obsidian-800 flex items-center justify-between">
               <span>Правило ФСП: пересдача теста на повышение — не чаще 1 раза в 3 месяца.</span>
-              <span className="text-slate-400 font-bold">Время: 15 минут</span>
+              <span className="text-slate-300 font-bold">Время: 15 минут</span>
             </div>
 
             <button
               onClick={() => setStep('testing')}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-neon-cyan via-blue-500 to-neon-purple text-black font-extrabold text-sm flex items-center justify-center gap-2 shadow-glow-cyan hover:opacity-95 transition-all"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-crimson-600 via-crimson-500 to-neon-purple text-white font-black text-sm flex items-center justify-center gap-2 shadow-glow-crimson hover:opacity-95 transition-all uppercase tracking-wider"
             >
               <span>НАЧАТЬ ТЕСТИРОВАНИЕ НА {selectedGrade.toUpperCase()}</span>
               <ArrowRight className="w-4 h-4" />
@@ -237,9 +237,9 @@ export const SkillTestModal: React.FC = () => {
         {step === 'testing' && (
           <div className="space-y-5">
             {/* Хедер теста */}
-            <div className="flex items-center justify-between pb-3 border-b border-cyber-border">
+            <div className="flex items-center justify-between pb-3 border-b border-obsidian-800">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-cyber-subcard border border-cyber-border text-neon-cyan">
+                <span className="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-obsidian-850 border border-obsidian-700/60 text-neon-cyan">
                   Вопрос {currentQuestionIndex + 1} из {TEST_QUESTIONS.length}
                 </span>
                 <span className="text-xs font-mono text-slate-400 hidden sm:inline">
@@ -247,7 +247,7 @@ export const SkillTestModal: React.FC = () => {
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs font-mono text-fsp-gold px-3 py-1 rounded-xl bg-cyber-subcard border border-cyber-border">
+              <div className="flex items-center gap-1.5 text-xs font-mono text-fsp-gold px-3 py-1 rounded-xl bg-obsidian-850 border border-obsidian-700/60 shadow-glow-gold/10">
                 <Clock className="w-3.5 h-3.5 animate-pulse" />
                 <span>12:45</span>
               </div>
@@ -264,8 +264,8 @@ export const SkillTestModal: React.FC = () => {
             </div>
 
             {/* Блок с кодом */}
-            <div className="rounded-2xl bg-black/80 border border-cyber-border p-4 font-mono text-xs text-slate-300 overflow-x-auto relative">
-              <div className="absolute top-2.5 right-3 text-[10px] text-slate-500 select-none">
+            <div className="rounded-2xl bg-black/90 border border-obsidian-700/80 p-4 font-mono text-xs text-slate-200 overflow-x-auto relative shadow-inner">
+              <div className="absolute top-2.5 right-3 text-[10px] text-slate-500 select-none font-mono">
                 C++ / Go Runtime
               </div>
               <pre><code>{currentQuestion.codeSnippet}</code></pre>
@@ -273,7 +273,7 @@ export const SkillTestModal: React.FC = () => {
 
             {/* Варианты ответов */}
             <div className="space-y-2 pt-1">
-              <label className="text-[10px] font-mono uppercase text-slate-400 block">
+              <label className="text-[10px] font-mono uppercase text-slate-400 block tracking-wider">
                 Выберите наиболее точный инженерный вердикт:
               </label>
               {currentQuestion.options.map((option) => {
@@ -282,14 +282,14 @@ export const SkillTestModal: React.FC = () => {
                   <button
                     key={option.id}
                     onClick={() => handleSelectOption(option.id)}
-                    className={`w-full p-3.5 rounded-xl border text-xs text-left transition-all flex items-start gap-3 ${
+                    className={`w-full p-3.5 rounded-xl border text-xs text-left transition-all duration-200 flex items-start gap-3 ${
                       isSelected
-                        ? 'bg-cyber-card border-neon-cyan text-white shadow-glow-cyan'
-                        : 'bg-cyber-subcard border-cyber-border text-slate-300 hover:border-slate-500'
+                        ? 'bg-crimson-950/60 border-crimson-500 text-white shadow-glow-crimson'
+                        : 'bg-obsidian-850 border-obsidian-700/60 text-slate-300 hover:border-obsidian-600 hover:text-white'
                     }`}
                   >
                     <span className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold shrink-0 mt-0.5 ${
-                      isSelected ? 'bg-neon-cyan text-black' : 'bg-cyber-card text-slate-400 border border-cyber-border'
+                      isSelected ? 'bg-crimson-500 text-white shadow-glow-crimson' : 'bg-obsidian-800 text-slate-400 border border-obsidian-700'
                     }`}>
                       {option.id.toUpperCase()}
                     </span>
@@ -300,11 +300,11 @@ export const SkillTestModal: React.FC = () => {
             </div>
 
             {/* Кнопка Далее */}
-            <div className="pt-3 border-t border-cyber-border flex justify-end">
+            <div className="pt-3 border-t border-obsidian-800 flex justify-end">
               <button
                 disabled={!selectedAnswers[currentQuestion.id]}
                 onClick={handleNext}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-neon-cyan to-blue-500 disabled:opacity-40 text-black font-bold text-xs flex items-center gap-2 shadow-glow-cyan transition-all"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-crimson-600 to-neon-purple disabled:opacity-40 text-white font-bold text-xs flex items-center gap-2 shadow-glow-crimson transition-all uppercase tracking-wider"
               >
                 <span>{isLastQuestion ? 'ЗАВЕРШИТЬ ТЕСТ И ПОЛУЧИТЬ КАТЕГОРИЮ' : 'СЛЕДУЮЩИЙ ВОПРОС'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -316,7 +316,7 @@ export const SkillTestModal: React.FC = () => {
         {/* ЭТАП 3: Результат и фиксация Категории */}
         {step === 'result' && (
           <div className="py-6 text-center space-y-6 animate-in zoom-in-95 duration-300">
-            <div className="w-20 h-20 rounded-full bg-fsp-emerald/20 text-fsp-emerald border-2 border-fsp-emerald flex items-center justify-center mx-auto shadow-glow-emerald">
+            <div className="w-20 h-20 rounded-full bg-fsp-emerald/10 text-fsp-emerald border-2 border-fsp-emerald flex items-center justify-center mx-auto shadow-glow-emerald">
               <CheckCircle2 className="w-10 h-10" />
             </div>
 
@@ -324,14 +324,14 @@ export const SkillTestModal: React.FC = () => {
               <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-fsp-emerald/15 text-fsp-emerald border border-fsp-emerald/30 inline-flex items-center gap-1.5 mb-2">
                 <Award className="w-3.5 h-3.5" /> КВАЛИФИКАЦИЯ УСПЕШНО ПОДТВЕРЖДЕНА
               </span>
-              <h2 className="text-3xl font-extrabold text-white">
+              <h2 className="text-3xl font-black text-white tracking-wide">
                 Результат: {calculatedScore} из 100 баллов
               </h2>
             </div>
 
             {/* Карточка присвоенной Категории */}
-            <div className="max-w-md mx-auto p-4 rounded-2xl bg-cyber-subcard border border-cyber-border text-left font-mono">
-              <span className="text-[10px] uppercase text-slate-400 block mb-1">
+            <div className="max-w-md mx-auto p-4 rounded-2xl bg-obsidian-850/90 border border-obsidian-700/70 text-left font-mono">
+              <span className="text-[10px] uppercase text-slate-400 block mb-1 tracking-wider">
                 Официальная категория в каталоге скаутинга:
               </span>
               <div className="text-sm font-bold text-neon-cyan flex items-center justify-between">
@@ -340,7 +340,7 @@ export const SkillTestModal: React.FC = () => {
                   {selectedGrade}
                 </span>
               </div>
-              <div className="mt-3 pt-3 border-t border-cyber-border/60 text-[11px] text-slate-400 space-y-1">
+              <div className="mt-3 pt-3 border-t border-obsidian-700/60 text-[11px] text-slate-400 space-y-1">
                 <div className="flex items-center justify-between">
                   <span>Статус тестирования:</span>
                   <span className="text-fsp-emerald font-bold">Подтвержден (Протокол ФСП)</span>
@@ -352,7 +352,7 @@ export const SkillTestModal: React.FC = () => {
               </div>
             </div>
 
-            <p className="text-xs text-slate-400 max-w-md mx-auto">
+            <p className="text-xs text-slate-300 max-w-md mx-auto leading-relaxed">
               Ваш профиль верифицирован и перемещен в верхние строчки каталога категории <strong className="text-white">{selectedGrade}</strong>. Работодатели уже видят ваш подтвержденный балл.
             </p>
 
@@ -363,7 +363,7 @@ export const SkillTestModal: React.FC = () => {
                 setSelectedAnswers({});
                 closeTestModal();
               }}
-              className="px-8 py-3 rounded-xl bg-neon-cyan text-black font-extrabold text-xs shadow-glow-cyan hover:scale-105 transition-all"
+              className="px-8 py-3 rounded-xl bg-neon-cyan text-black font-black text-xs shadow-glow-cyan hover:scale-105 transition-all uppercase tracking-wider"
             >
               ПЕРЕЙТИ В ЛИЧНЫЙ КАБИНЕТ
             </button>
