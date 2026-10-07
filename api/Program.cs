@@ -2,7 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 
-var distPath = Path.Combine(builder.Environment.ContentRootPath, "src", "dist");
+var distPath = Path.Combine(builder.Environment.ContentRootPath, "..", "src", "dist");
 
 app.UseStaticFiles(new StaticFileOptions
 {
