@@ -49,61 +49,61 @@ export const DemoToolbar: React.FC = () => {
 
   return (
     <div className="fixed bottom-4 right-4 z-40 text-left font-mono">
-      <div className="flex items-center gap-2 p-1.5 rounded-xl bg-obsidian-card border border-obsidian-border shadow-2xl">
+      <div className="flex items-center gap-2 p-1.5 rounded-2xl glass-panel border border-crimson-500/40 bg-obsidian-900/90 shadow-2xl">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-obsidian-sub hover:bg-obsidian-border text-xs text-chalk transition-all border border-obsidian-border"
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 text-xs text-white transition-all border border-obsidian-700/60 shadow-glow-crimson/10"
         >
-          <Sliders className="w-3.5 h-3.5 text-crimson" />
+          <Sliders className="w-3.5 h-3.5 text-crimson-400 animate-pulse" />
           <span className="font-bold uppercase tracking-wider text-[11px]">КОНСОЛЬ ЖЮРИ</span>
-          {isOpen ? <ChevronDown className="w-3 h-3 text-chalk-dim" /> : <ChevronUp className="w-3 h-3 text-chalk-dim" />}
+          {isOpen ? <ChevronDown className="w-3 h-3 text-slate-400" /> : <ChevronUp className="w-3 h-3 text-slate-400" />}
         </button>
 
         <button
           onClick={resetDemoState}
           title="Сбросить стенд к исходному состоянию (Клавиша R)"
-          className="p-1.5 rounded-lg bg-obsidian-sub hover:bg-crimson/20 text-chalk-dim hover:text-crimson border border-obsidian-border transition-all"
+          className="p-2 rounded-xl bg-obsidian-850 hover:bg-crimson-950/60 text-slate-400 hover:text-crimson-400 border border-obsidian-700/60 transition-all"
         >
           <RotateCcw className="w-3.5 h-3.5" />
         </button>
       </div>
 
       {isOpen && (
-        <div className="mt-2 w-72 rounded-xl bg-obsidian-card border border-obsidian-border p-4 shadow-2xl space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className="flex items-center justify-between pb-2 border-b border-obsidian-border text-[11px] text-chalk-dim">
-            <span className="flex items-center gap-1.5 text-chalk font-bold">
-              <Keyboard className="w-3.5 h-3.5 text-crimson" /> Горячие клавиши
+        <div className="mt-2 w-72 rounded-2xl glass-panel border border-crimson-500/40 bg-gradient-to-b from-obsidian-900 via-obsidian-950 to-black p-4 shadow-2xl space-y-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <div className="flex items-center justify-between pb-2 border-b border-obsidian-800 text-[11px] text-slate-400">
+            <span className="flex items-center gap-1.5 text-white font-bold">
+              <Keyboard className="w-3.5 h-3.5 text-crimson-400" /> Горячие клавиши
             </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-obsidian-sub text-crimson font-bold">
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-crimson-950/80 text-crimson-400 border border-crimson-500/40 font-bold tracking-wider">
               ACTIVE
             </span>
           </div>
 
-          <div className="space-y-1.5 text-xs text-chalk-muted">
+          <div className="space-y-2 text-xs text-slate-300">
             <div className="flex items-center justify-between">
               <span className="text-[11px]">Режим Скаут-центра:</span>
-              <kbd className="px-2 py-0.5 rounded bg-obsidian-sub border border-obsidian-border text-crimson font-bold">1</kbd>
+              <kbd className="px-2 py-0.5 rounded-lg bg-obsidian-850 border border-obsidian-700 text-crimson-400 font-bold shadow-glow-crimson/20">1</kbd>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[11px]">Режим Атлета ФСП:</span>
-              <kbd className="px-2 py-0.5 rounded bg-obsidian-sub border border-obsidian-border text-chalk font-bold">2</kbd>
+              <kbd className="px-2 py-0.5 rounded-lg bg-obsidian-850 border border-obsidian-700 text-neon-cyan font-bold shadow-glow-cyan/20">2</kbd>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[11px]">Сброс стенда (Reset):</span>
-              <kbd className="px-2 py-0.5 rounded bg-obsidian-sub border border-obsidian-border text-fsp-gold font-bold">R</kbd>
+              <kbd className="px-2 py-0.5 rounded-lg bg-obsidian-850 border border-obsidian-700 text-fsp-gold font-bold shadow-glow-gold/20">R</kbd>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-[11px]">Закрыть любое окно:</span>
-              <kbd className="px-1.5 py-0.5 rounded bg-obsidian-sub border border-obsidian-border text-chalk-dim text-[10px]">Esc</kbd>
+              <kbd className="px-1.5 py-0.5 rounded-lg bg-obsidian-850 border border-obsidian-700 text-slate-400 text-[10px]">Esc</kbd>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-obsidian-border">
+          <div className="pt-2 border-t border-obsidian-800">
             <button
               onClick={triggerTestConfetti}
-              className="w-full py-1.5 rounded-lg bg-obsidian-sub hover:bg-crimson/20 text-chalk-muted hover:text-crimson border border-obsidian-border text-[11px] flex items-center justify-center gap-1.5 transition-all"
+              className="w-full py-2 rounded-xl bg-obsidian-850 hover:bg-crimson-950/60 text-slate-300 hover:text-crimson-400 border border-obsidian-700/60 text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all"
             >
-              <PartyPopper className="w-3.5 h-3.5 text-crimson" />
+              <PartyPopper className="w-3.5 h-3.5 text-crimson-400" />
               <span>Тест анимации оффера</span>
             </button>
           </div>

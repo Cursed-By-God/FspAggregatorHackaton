@@ -8,28 +8,35 @@ export default {
     extend: {
       colors: {
         obsidian: {
-          DEFAULT: "#09090B", // Глубокий матовый черный
-          base: "#050507",    // Фоновый холст
-          card: "#121216",    // Карточки первого уровня
-          sub: "#18181F",     // Внутренние модули и инпуты
-          border: "#262630",  // Границы
-          borderLight: "#383846"
+          DEFAULT: "#08090E",
+          base: "#05060A",    // Ультра-темный фон
+          card: "rgba(14, 16, 26, 0.75)", // Полупрозрачные матовые карточки
+          cardHover: "rgba(22, 26, 42, 0.85)",
+          sub: "#111320",     // Инпуты и вложенные панели
+          border: "rgba(255, 255, 255, 0.08)",
+          borderLight: "rgba(255, 255, 255, 0.18)"
         },
         crimson: {
-          DEFAULT: "#E11D48", // Фирменный алый ФСП
-          dark: "#BE123C",    // Алый при наведении
-          deep: "#9F1239",    // Градиенты
-          glow: "rgba(225, 29, 72, 0.35)",
-          subtle: "rgba(225, 29, 72, 0.12)"
+          DEFAULT: "#FF1744", // Неоново-алый ФСП
+          hover: "#D50000",
+          dark: "#B71C1C",
+          glow: "rgba(255, 23, 68, 0.4)",
+          subtle: "rgba(255, 23, 68, 0.1)"
+        },
+        cyan: {
+          DEFAULT: "#00E5FF",
+          glow: "rgba(0, 229, 255, 0.4)",
+          subtle: "rgba(0, 229, 255, 0.1)"
         },
         chalk: {
-          DEFAULT: "#F8FAFC", // Кристальный белый текст
-          muted: "#94A3B8",   // Вторичный серый
-          dim: "#64748B"      // Подписи
+          DEFAULT: "#F8FAFC",
+          muted: "#94A3B8",
+          dim: "#64748B"
         },
         fsp: {
-          gold: "#F59E0B",
-          emerald: "#10B981"
+          gold: "#FFC400",
+          emerald: "#00E676",
+          purple: "#AA00FF"
         }
       },
       fontFamily: {
@@ -37,9 +44,32 @@ export default {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
-        'glow-crimson': '0 0 24px -2px rgba(225, 29, 72, 0.45)',
-        'glow-crimson-sm': '0 0 12px -1px rgba(225, 29, 72, 0.35)',
-        'dossier': '0 8px 30px rgba(0, 0, 0, 0.65)',
+        'glow-crimson': '0 0 30px rgba(255, 23, 68, 0.35)',
+        'glow-crimson-sm': '0 0 14px rgba(255, 23, 68, 0.25)',
+        'glow-cyan': '0 0 30px rgba(0, 229, 255, 0.35)',
+        'glow-cyan-sm': '0 0 14px rgba(0, 229, 255, 0.25)',
+        'glow-gold': '0 0 24px rgba(255, 196, 0, 0.3)',
+        'glow-emerald': '0 0 24px rgba(0, 230, 118, 0.3)',
+        'luxury': '0 20px 50px rgba(0, 0, 0, 0.8), 0 0 1px rgba(255, 255, 255, 0.15)',
+      },
+      animation: {
+        'pulse-glow': 'pulseGlow 2.5s infinite ease-in-out',
+        'float': 'float 6s ease-in-out infinite',
+        'shimmer': 'shimmer 2.5s linear infinite',
+      },
+      keyframes: {
+        pulseGlow: {
+          '0%, 100%': { opacity: '1', filter: 'drop-shadow(0 0 8px rgba(255, 23, 68, 0.6))' },
+          '50%': { opacity: '0.6', filter: 'drop-shadow(0 0 2px rgba(255, 23, 68, 0.2))' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-6px)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        }
       }
     },
   },

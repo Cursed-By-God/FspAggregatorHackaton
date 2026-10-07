@@ -62,6 +62,7 @@ export const OfferModal: React.FC = () => {
     `Здравствуйте, ${offerTargetCandidate.fullName.split(' ')[0]}! Обратили внимание на ваш профиль и подтвержденные навыки. Готовы предложить позицию сразу с прямым оффером без стандартных многоэтапных скринингов.`
   );
   const [isSuccess, setIsSuccess] = useState(false);
+  const isSalaryValid = salaryMin >= 0 && salaryMax >= 0 && salaryMin <= salaryMax;
 
   const togglePerk = (perk: string) => {
     setSelectedPerks(prev => 
@@ -105,45 +106,45 @@ export const OfferModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl glass-panel border border-cyber-border shadow-2xl p-6 sm:p-8 text-left">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-obsidian-950/85 backdrop-blur-2xl animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-3xl glass-panel border border-crimson-500/30 shadow-2xl p-6 sm:p-8 text-left bg-gradient-to-b from-obsidian-900/90 via-obsidian-950/95 to-black">
         
         <button
           onClick={closeOfferModal}
           disabled={isSuccess}
-          className="absolute top-5 right-5 p-2 rounded-xl bg-cyber-subcard hover:bg-cyber-card text-slate-400 hover:text-white border border-cyber-border transition-all"
+          className="absolute top-5 right-5 p-2.5 rounded-xl bg-obsidian-850 hover:bg-obsidian-800 text-slate-400 hover:text-white border border-obsidian-700/60 transition-all duration-200"
         >
           <X className="w-5 h-5" />
         </button>
 
         {isSuccess ? (
           <div className="py-16 text-center space-y-4 animate-in zoom-in-95 duration-300">
-            <div className="w-20 h-20 rounded-full bg-fsp-emerald/20 text-fsp-emerald border-2 border-fsp-emerald flex items-center justify-center mx-auto shadow-glow-emerald">
+            <div className="w-20 h-20 rounded-full bg-fsp-emerald/10 text-fsp-emerald border-2 border-fsp-emerald flex items-center justify-center mx-auto shadow-glow-emerald">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h3 className="text-2xl font-extrabold text-white">Оффер успешно доставлен!</h3>
-            <p className="text-sm text-slate-300 max-w-md mx-auto">
-              Предложение отправлено атлету <span className="text-neon-cyan font-bold">{offerTargetCandidate.fullName}</span>. В кабинете соискателя появилось уведомление.
+            <h3 className="text-2xl font-black text-white tracking-wide">ОФФЕР УСПЕШНО ДОСТАВЛЕН!</h3>
+            <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+              Предложение отправлено атлету <span className="text-neon-cyan font-bold">{offerTargetCandidate.fullName}</span>. В кабинете соискателя появилось персональное уведомление.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/40 text-neon-cyan text-xs font-mono mb-2">
-                <Sparkles className="w-3.5 h-3.5" /> ОБРАТНЫЙ НАЙМ: ПРЯМОЕ ПРЕДЛОЖЕНИЕ
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-crimson-500/10 border border-crimson-500/40 text-crimson-400 text-xs font-mono mb-2 shadow-glow-crimson/20">
+                <Sparkles className="w-3.5 h-3.5 text-crimson-400 animate-pulse" /> ОБРАТНЫЙ НАЙМ • ПРЯМОЙ ОФФЕР
               </div>
-              <h2 className="text-2xl font-extrabold text-white">
+              <h2 className="text-2xl font-black text-white tracking-wide">
                 Сделать оффер кандидату
               </h2>
             </div>
 
             {/* Карточка кандидата */}
-            <div className="p-4 rounded-2xl bg-cyber-subcard/90 border border-cyber-border flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-obsidian-850/80 border border-obsidian-700/60 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <img 
                   src={offerTargetCandidate.avatarUrl} 
                   alt={offerTargetCandidate.fullName} 
-                  className="w-12 h-12 rounded-xl object-cover border border-cyber-border"
+                  className="w-12 h-12 rounded-xl object-cover border border-crimson-500/30"
                 />
                 <div>
                   <h4 className="text-sm font-bold text-white">{offerTargetCandidate.fullName}</h4>
@@ -152,7 +153,7 @@ export const OfferModal: React.FC = () => {
               </div>
 
               <div className="text-right">
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-fsp-gold/20 text-fsp-gold border border-fsp-gold/40 inline-flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-fsp-gold/15 text-fsp-gold border border-fsp-gold/40 inline-flex items-center gap-1 shadow-glow-gold/10">
                   <Trophy className="w-3 h-3" /> {offerTargetCandidate.fspProfile.sportRank}
                 </span>
                 <span className="block text-[10px] font-mono text-slate-400 mt-1">
@@ -163,10 +164,10 @@ export const OfferModal: React.FC = () => {
 
             {/* Выбор компании */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 tracking-wider">
                 Компания-работодатель
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 {PRESET_COMPANIES.map((company) => {
                   const isSelected = selectedCompany.name === company.name;
                   return (
@@ -174,14 +175,14 @@ export const OfferModal: React.FC = () => {
                       type="button"
                       key={company.name}
                       onClick={() => setSelectedCompany(company)}
-                      className={`p-2.5 rounded-xl border flex items-center gap-2.5 transition-all text-xs font-bold ${
+                      className={`p-3 rounded-xl border flex items-center gap-2.5 transition-all text-xs font-bold ${
                         isSelected 
-                          ? 'bg-cyber-card border-neon-cyan text-white shadow-glow-cyan' 
-                          : 'bg-cyber-subcard border-cyber-border text-slate-400 hover:text-white'
+                          ? 'bg-crimson-950/60 border-crimson-500 text-white shadow-glow-crimson' 
+                          : 'bg-obsidian-850 border-obsidian-700/60 text-slate-400 hover:text-white hover:border-obsidian-600'
                       }`}
                     >
                       <img src={company.logo} alt={company.name} className="w-6 h-6 rounded-lg" />
-                      <span>{company.name}</span>
+                      <span className="truncate">{company.name}</span>
                     </button>
                   );
                 })}
@@ -190,7 +191,7 @@ export const OfferModal: React.FC = () => {
 
             {/* Позиция */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 tracking-wider">
                 Позиция / Должность
               </label>
               <div className="relative">
@@ -200,18 +201,18 @@ export const OfferModal: React.FC = () => {
                   required
                   value={positionTitle}
                   onChange={(e) => setPositionTitle(e.target.value)}
-                  className="w-full bg-cyber-subcard border border-cyber-border rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-neon-cyan"
+                  className="w-full bg-obsidian-850 border border-obsidian-700/70 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-neon-cyan transition-colors"
                 />
               </div>
             </div>
 
-            {/* Зарплатная вилка «от–до» (по ТЗ стр. 5) */}
-            <div className="p-4 rounded-2xl bg-cyber-subcard border border-cyber-border space-y-3">
+            {/* Зарплатная вилка «от–до» */}
+            <div className="p-4 rounded-2xl bg-obsidian-850/90 border border-obsidian-700/70 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono uppercase text-slate-300">
                   Вилка предложения (от–до в рублях):
                 </span>
-                <span className="text-sm font-mono font-extrabold text-neon-cyan">
+                <span className="text-sm font-mono font-black text-neon-cyan">
                   {salaryMin.toLocaleString('ru-RU')} – {salaryMax.toLocaleString('ru-RU')} ₽ / мес
                 </span>
               </div>
@@ -221,35 +222,47 @@ export const OfferModal: React.FC = () => {
                   <label className="text-[10px] font-mono text-slate-400 block mb-1">Нижняя планка (от):</label>
                   <input
                     type="number"
+                    min={0}
                     step={10000}
                     value={salaryMin}
-                    onChange={(e) => setSalaryMin(Number(e.target.value))}
-                    className="w-full bg-cyber-card border border-cyber-border rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-neon-cyan"
+                    onChange={(e) => setSalaryMin(Math.max(0, Number(e.target.value)))}
+                    className={`w-full bg-obsidian-900 border rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none ${
+                      !isSalaryValid ? 'border-red-500 focus:border-red-500' : 'border-obsidian-700 focus:border-neon-cyan'
+                    }`}
                   />
                 </div>
                 <div>
                   <label className="text-[10px] font-mono text-slate-400 block mb-1">Верхняя планка (до):</label>
                   <input
                     type="number"
+                    min={0}
                     step={10000}
                     value={salaryMax}
-                    onChange={(e) => setSalaryMax(Number(e.target.value))}
-                    className="w-full bg-cyber-card border border-cyber-border rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-neon-cyan"
+                    onChange={(e) => setSalaryMax(Math.max(0, Number(e.target.value)))}
+                    className={`w-full bg-obsidian-900 border rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none ${
+                      !isSalaryValid ? 'border-red-500 focus:border-red-500' : 'border-obsidian-700 focus:border-neon-cyan'
+                    }`}
                   />
                 </div>
               </div>
 
-              <div className="text-[11px] font-mono text-fsp-emerald pt-1 flex items-center justify-between">
-                <span>Ожидания кандидата: {offerTargetCandidate.salaryMin.toLocaleString('ru-RU')} – {offerTargetCandidate.salaryMax.toLocaleString('ru-RU')} ₽</span>
-                <span className="px-2 py-0.5 rounded bg-fsp-emerald/10 border border-fsp-emerald/30 font-bold">
-                  Соответствует рынку
-                </span>
-              </div>
+              {!isSalaryValid ? (
+                <div className="text-[11px] font-mono text-red-400 pt-1">
+                  ⚠️ Ошибка: Нижняя планка ЗП не может быть больше верхней планки!
+                </div>
+              ) : (
+                <div className="text-[11px] font-mono text-fsp-emerald pt-1 flex items-center justify-between">
+                  <span>Ожидания кандидата: {offerTargetCandidate.salaryMin.toLocaleString('ru-RU')} – {offerTargetCandidate.salaryMax.toLocaleString('ru-RU')} ₽</span>
+                  <span className="px-2 py-0.5 rounded bg-fsp-emerald/10 border border-fsp-emerald/30 font-bold">
+                    Соответствует рынку
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Формат работы */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 tracking-wider">
                 Формат занятости
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -260,8 +273,8 @@ export const OfferModal: React.FC = () => {
                     onClick={() => setEmploymentType(type)}
                     className={`py-2 px-2.5 rounded-xl border text-[11px] font-mono transition-all truncate ${
                       employmentType === type
-                        ? 'bg-neon-cyan text-black font-bold shadow-glow-cyan'
-                        : 'bg-cyber-subcard border-cyber-border text-slate-300 hover:border-slate-500'
+                        ? 'bg-neon-cyan text-black font-extrabold shadow-glow-cyan'
+                        : 'bg-obsidian-850 border-obsidian-700/60 text-slate-300 hover:border-obsidian-600'
                     }`}
                   >
                     {type}
@@ -272,7 +285,7 @@ export const OfferModal: React.FC = () => {
 
             {/* Бонусы */}
             <div>
-              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 flex items-center gap-1.5">
+              <label className="text-xs font-mono uppercase text-slate-400 block mb-2 flex items-center gap-1.5 tracking-wider">
                 <Gift className="w-3.5 h-3.5 text-fsp-gold" /> Специальные бенефиты оффера
               </label>
               <div className="flex flex-wrap gap-2">
@@ -285,8 +298,8 @@ export const OfferModal: React.FC = () => {
                       onClick={() => togglePerk(perk)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
                         isChecked
-                          ? 'bg-fsp-gold/20 text-fsp-gold border border-fsp-gold/50 font-bold'
-                          : 'bg-cyber-subcard text-slate-400 border border-cyber-border hover:border-slate-500'
+                          ? 'bg-fsp-gold/20 text-fsp-gold border border-fsp-gold/50 font-bold shadow-glow-gold/10'
+                          : 'bg-obsidian-850 text-slate-400 border border-obsidian-700/60 hover:border-obsidian-600'
                       }`}
                     >
                       {isChecked && <Check className="w-3 h-3 text-fsp-gold" />}
@@ -300,7 +313,7 @@ export const OfferModal: React.FC = () => {
             {/* Сообщение */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-xs font-mono uppercase text-slate-400">
+                <label className="text-xs font-mono uppercase text-slate-400 tracking-wider">
                   Сообщение кандидату
                 </label>
                 <button
@@ -316,7 +329,7 @@ export const OfferModal: React.FC = () => {
                 required
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-cyber-subcard border border-cyber-border rounded-xl p-3 text-xs text-white focus:outline-none focus:border-neon-cyan resize-none leading-relaxed"
+                className="w-full bg-obsidian-850 border border-obsidian-700/70 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-neon-cyan resize-none leading-relaxed"
               />
             </div>
 
@@ -324,7 +337,8 @@ export const OfferModal: React.FC = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-neon-cyan via-blue-500 to-neon-purple text-black font-extrabold text-sm flex items-center justify-center gap-2 shadow-glow-cyan hover:opacity-95 transition-all"
+                disabled={!isSalaryValid}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-crimson-600 via-crimson-500 to-neon-purple disabled:opacity-40 disabled:cursor-not-allowed text-white font-black text-sm flex items-center justify-center gap-2 shadow-glow-crimson hover:opacity-95 transition-all uppercase tracking-wider"
               >
                 <SendHorizontal className="w-4 h-4" />
                 <span>ОТПРАВИТЬ ПРЯМОЙ ОФФЕР ({salaryMin.toLocaleString('ru-RU')} – {salaryMax.toLocaleString('ru-RU')} ₽)</span>
