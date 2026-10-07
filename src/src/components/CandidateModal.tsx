@@ -32,10 +32,27 @@ export const CandidateModal: React.FC = () => {
   const { fspProfile, radarSkills, testSummary } = selectedCandidate;
   const hasFsp = fspProfile.hasHistory;
 
-  const handleCopyHash = (hash: string) => {
-    navigator.clipboard.writeText(hash);
-    setCopiedHash(true);
-    setTimeout(() => setCopiedHash(false), 2000);
+  const handleCopyHash = async (hash: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(hash);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = hash;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopiedHash(true);
+      setTimeout(() => setCopiedHash(false), 2000);
+    } catch (err) {
+      console.warn('Не удалось скопировать хэш:', err);
+    }
   };
 
   return (

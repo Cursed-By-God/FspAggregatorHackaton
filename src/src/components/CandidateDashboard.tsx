@@ -28,13 +28,25 @@ export const CandidateDashboard: React.FC = () => {
     openTestModal 
   } = useAppStore();
 
-  const athlete = candidates[0];
-  const myOffers = offers.filter(o => o.candidateId === athlete.id);
+  const athlete = candidates[0] || null;
+  const myOffers = athlete ? offers.filter(o => o.candidateId === athlete.id) : [];
   const pendingCount = myOffers.filter(o => o.status === 'pending').length;
   const acceptedCount = myOffers.filter(o => o.status === 'accepted').length;
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncSuccess, setSyncSuccess] = useState(false);
+
+  if (!athlete) {
+    return (
+      <div className="panel-dossier rounded-2xl p-12 text-center max-w-xl mx-auto my-12 font-mono">
+        <Sparkles className="w-10 h-10 text-chalk-dim mx-auto mb-3 animate-pulse" />
+        <h3 className="text-base font-bold text-chalk mb-1">Профиль атлета загружается...</h3>
+        <p className="text-xs text-chalk-muted">
+          Синхронизация с реестром ФСП или ожидание данных кандидатов.
+        </p>
+      </div>
+    );
+  }
 
   const handleFspSync = () => {
     setIsSyncing(true);
