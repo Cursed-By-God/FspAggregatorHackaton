@@ -8,9 +8,7 @@ public class Repository {
 
     public async Task<ResponseSearchParamsDTO> GetCandidateForParamsAsync(SearchParamsDTO searchParams){
         IQueryable<CandidateEntity> query = _db.Candidates;
-        var 
-
-
+    
        if (!string.IsNullOrWhiteSpace(searchParams.SearchQuery))
         {
             var searchWords = searchParams.SearchQuery
@@ -37,10 +35,26 @@ public class Repository {
             .Where(c => !string.IsNullOrEmpty(c))
             .ToList();
 
-            //делаем выборку или
+            //делаем выборку ИЛИ
             query = query.Where(c => c.CategorySpecialization.Any(сat => categories.Contains(сat.ToLower())));
         }
         
+        if(!string.IsNullOrEmpty(searchParams.Stack)){
+            var Stack = searchParams.Stack
+            .Split(","ы)
+            .Select(s => s.Trim().ToLower())
+            .Where(s => !string.IsNullOrEmpty(s))
+            .ToList();
+
+            //делаем выборку И
+            foreach(var stackItem in Stack){
+                query = query.Where(c => c.PrimaryStack.Any(s => s.ToLower().Contains(stackItem)));
+            }
+        }
+
+        if(!string.IsNullOrEmpty(searchParams.Discipline)){
+            
+        }
     }
 
 }
