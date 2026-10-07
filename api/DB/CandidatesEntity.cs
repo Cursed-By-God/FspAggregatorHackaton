@@ -1,5 +1,5 @@
 public class CandidatesEntity {
-    public int Id {get; set;} // спросить у Данила за наличие обычного id на фронте и если у него нет сказать сделать
+    public int Id {get; set;} 
     public string FullName {get; set;}
     public string AvaaterURL {get; set;}
     public string Handle {get; set;}

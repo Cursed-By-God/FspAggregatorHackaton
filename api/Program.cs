@@ -1,5 +1,8 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddDbContext<DbContextFsp>(p => p.UseNpgsql(builder.Configuration["ConnectionString"]));
+builder.Services.AddScoped<Repository>();
+builder.Services.AddScoped<CandidateService>();
 var app = builder.Build();
 
 var distPath = Path.Combine(builder.Environment.ContentRootPath, "..", "src", "dist");
@@ -7,7 +10,7 @@ var distPath = Path.Combine(builder.Environment.ContentRootPath, "..", "src", "d
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(distPath),
-    RequestPath = "" 
+    RequestPath = ""
 });
 
 app.MapFallbackToFile("index.html", new StaticFileOptions
