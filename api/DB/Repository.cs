@@ -41,7 +41,7 @@ public class Repository {
         
         if(!string.IsNullOrEmpty(searchParams.Stack)){
             var Stack = searchParams.Stack
-            .Split(","ы)
+            .Split(",")
             .Select(s => s.Trim().ToLower())
             .Where(s => !string.IsNullOrEmpty(s))
             .ToList();
