@@ -16,7 +16,7 @@ export const Header: React.FC = () => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const activeCandidate = candidates[0];
+  const activeCandidate = candidates[0] || null;
   const pendingOffers = offers.filter(o => o.status === 'pending');
 
   useEffect(() => {
@@ -159,7 +159,7 @@ export const Header: React.FC = () => {
           {/* Плашка текущего пользователя */}
           <div className="hidden sm:flex items-center gap-3 pl-3 border-l border-obsidian-border">
             <img 
-              src={roleMode === 'recruiter' 
+              src={roleMode === 'recruiter' || !activeCandidate
                 ? 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><rect width="60" height="60" rx="14" fill="%23E11D48"/><text x="30" y="38" font-family="monospace" font-size="22" font-weight="900" fill="white" text-anchor="middle">HR</text></svg>'
                 : activeCandidate.avatarUrl
               } 
@@ -168,10 +168,12 @@ export const Header: React.FC = () => {
             />
             <div className="text-left text-xs font-mono">
               <span className="block font-bold text-chalk leading-tight">
-                {roleMode === 'recruiter' ? 'Старший Скаут' : activeCandidate.fullName}
+                {roleMode === 'recruiter' || !activeCandidate ? 'Старший Скаут' : activeCandidate.fullName}
               </span>
               <span className="text-[10px] text-chalk-dim block">
-                {roleMode === 'recruiter' ? 'Head of Tech Talent' : `${activeCandidate.fspProfile.sportRank} • ${activeCandidate.handle}`}
+                {roleMode === 'recruiter' || !activeCandidate 
+                  ? 'Head of Tech Talent' 
+                  : `${activeCandidate.fspProfile?.sportRank || 'Без разряда'} • ${activeCandidate.handle}`}
               </span>
             </div>
           </div>

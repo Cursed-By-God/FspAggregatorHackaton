@@ -4,6 +4,7 @@ import {
   RotateCcw, 
   Trophy, 
   Flame, 
+  Layers,
   X
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
@@ -19,11 +20,13 @@ const DISCIPLINE_CONFIG: { id: FspDiscipline; label: string }[] = [
 
 const SPORT_RANKS: FspSportRank[] = ['МС', 'КМС', '1-й разряд', '2-й разряд', 'Без разряда'];
 const GRADES: DeveloperGrade[] = ['Junior+', 'Middle', 'Middle+', 'Senior', 'Lead / Architect'];
+const POPULAR_STACK: string[] = ['C++', 'Go', 'Python', 'Rust', 'TypeScript', 'Kafka', 'Docker', 'PostgreSQL', 'PyTorch', 'ROS2'];
 
 export const CatalogFilters: React.FC = () => {
   const { 
     filters, 
     setSearchQuery, 
+    toggleStackFilter,
     toggleDisciplineFilter, 
     toggleSportRankFilter, 
     toggleGradeFilter,
@@ -34,6 +37,7 @@ export const CatalogFilters: React.FC = () => {
 
   const hasActiveFilters = 
     filters.searchQuery !== '' ||
+    filters.stack.length > 0 ||
     filters.disciplines.length > 0 ||
     filters.sportRanks.length > 0 ||
     filters.grades.length > 0 ||
@@ -50,7 +54,7 @@ export const CatalogFilters: React.FC = () => {
             type="text"
             value={filters.searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Поиск по стеку (C++, Rust, Go), имени или компетенциям..."
+            placeholder="Поиск по ФИО, описанию или компетенциям..."
             className="w-full bg-obsidian-sub border border-obsidian-border rounded-xl pl-10 pr-10 py-2.5 text-xs text-chalk placeholder-chalk-dim focus:outline-none focus:border-crimson transition-all font-mono"
           />
           {filters.searchQuery && (
@@ -84,6 +88,32 @@ export const CatalogFilters: React.FC = () => {
               <span>Сброс</span>
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Фильтр по тегам Стека технологий (Параметр API ?stack=...) */}
+      <div>
+        <span className="text-[10px] font-mono uppercase text-chalk-dim mb-2 flex items-center gap-1.5">
+          <Layers className="w-3 h-3 text-cyan-400" /> Фильтр по стеку технологий (query-параметр <code className="text-crimson font-bold">?stack=</code>):
+        </span>
+        <div className="flex flex-wrap gap-1.5">
+          {POPULAR_STACK.map((tech) => {
+            const isSelected = filters.stack.includes(tech);
+            return (
+              <button
+                key={tech}
+                onClick={() => toggleStackFilter(tech)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1 ${
+                  isSelected
+                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/60 font-bold shadow-sm'
+                    : 'bg-obsidian-sub text-chalk-muted border border-obsidian-border hover:border-obsidian-borderLight'
+                }`}
+              >
+                <span>{tech}</span>
+                {isSelected && <X className="w-3 h-3 text-cyan-300 ml-0.5" />}
+              </button>
+            );
+          })}
         </div>
       </div>
 

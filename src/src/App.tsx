@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { 
   Users, 
   SearchX, 
@@ -6,7 +6,8 @@ import {
   BrainCircuit, 
   XCircle,
   Flame,
-  ArrowRight
+  ArrowRight,
+  WifiOff
 } from 'lucide-react';
 import { Header } from './components/Header';
 import { CatalogFilters } from './components/CatalogFilters';
@@ -32,8 +33,15 @@ export default function App() {
     isSmartMatchOpen,
     openSmartMatchModal,
     activeSmartNeed,
-    clearSmartMatch
+    clearSmartMatch,
+    fetchCandidates,
+    isLoadingCandidates,
+    candidatesError
   } = useAppStore();
+
+  useEffect(() => {
+    fetchCandidates();
+  }, [filters, fetchCandidates]);
 
   const filteredCandidates = useMemo(() => {
     return candidates
@@ -42,8 +50,17 @@ export default function App() {
           const query = filters.searchQuery.toLowerCase();
           const matchesName = candidate.fullName.toLowerCase().includes(query);
           const matchesHandle = candidate.handle.toLowerCase().includes(query);
+          const matchesHeadline = candidate.headline.toLowerCase().includes(query);
+          const matchesBio = candidate.bio.toLowerCase().includes(query);
           const matchesStack = candidate.primaryStack.some(tech => tech.toLowerCase().includes(query));
-          if (!matchesName && !matchesHandle && !matchesStack) return false;
+          if (!matchesName && !matchesHandle && !matchesHeadline && !matchesBio && !matchesStack) return false;
+        }
+
+        if (filters.stack && filters.stack.length > 0) {
+          const matchesSelectedStack = filters.stack.some(selectedTech =>
+            candidate.primaryStack.some(tech => tech.toLowerCase().includes(selectedTech.toLowerCase()))
+          );
+          if (!matchesSelectedStack) return false;
         }
 
         if (filters.disciplines.length > 0) {
@@ -157,11 +174,28 @@ export default function App() {
               </div>
             )}
 
+            {/* Плашка фолбэка API если бэкенд недоступен */}
+            {candidatesError && (
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 mb-6 flex items-center justify-between text-xs font-mono text-amber-300">
+                <div className="flex items-center gap-2.5">
+                  <WifiOff className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>{candidatesError}</span>
+                </div>
+                <button
+                  onClick={() => fetchCandidates()}
+                  className="px-2.5 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-[11px] font-bold"
+                >
+                  Повторить запрос
+                </button>
+              </div>
+            )}
+
             <CatalogFilters />
 
             <div className="flex items-center justify-between mb-4 font-mono">
               <span className="text-xs font-bold uppercase text-chalk-dim flex items-center gap-2">
                 <Users className="w-4 h-4 text-crimson" /> База кибератлетов ({filteredCandidates.length} из {candidates.length})
+                {isLoadingCandidates && <span className="text-crimson animate-pulse ml-2">(Загрузка из API...)</span>}
               </span>
             </div>
 
