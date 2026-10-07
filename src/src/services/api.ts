@@ -3,7 +3,7 @@ import { MOCK_CANDIDATES } from '../data/mockCandidates';
 import { INITIAL_OFFERS } from '../data/mockOffers';
 
 // ФЛАГ ПЕРЕКЛЮЧЕНИЯ: когда бэкендер поднимет сервер, меняем на true
-export const USE_REAL_BACKEND = false;
+export const USE_REAL_BACKEND = true;
 export const API_BASE_URL = 'http://localhost:8000/api';
 
 export const api = {
