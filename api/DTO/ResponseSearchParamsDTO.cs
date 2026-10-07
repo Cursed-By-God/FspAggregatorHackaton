@@ -1,4 +1,4 @@
 public class ResponseSearchParamsDTO 
 {
-    public List<CandidateEntity> Candidates { get; set; }
+    public List<CandidatesEntity> Candidates { get; set; }
 }

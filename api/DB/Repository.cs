@@ -6,8 +6,8 @@ public class Repository {
         _db = db;
     }
 
-    public async Task<ResponseSearchParamsDTO> GetCandidateForParamsAsync(SearchParamsDTO searchParams){
-        IQueryable<CandidateEntity> query = _db.Candidates;
+    public async Task<ResponseSearchParamsDTO> GetCandidateForParamsAsync(RequestSearchParamsDTO searchParams){
+        IQueryable<CandidatesEntity> query = _db.Candidates;
     
        if (!string.IsNullOrWhiteSpace(searchParams.SearchQuery))
         {
@@ -55,6 +55,8 @@ public class Repository {
         if(!string.IsNullOrEmpty(searchParams.Discipline)){
             
         }
+
+        return new ResponseSearchParamsDTO { Candidates = query.ToList() };
     }
 
 }

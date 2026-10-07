@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DbContextFsp>(p => p.UseNpgsql(builder.Configuration["ConnectionString"]));

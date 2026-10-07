@@ -5,12 +5,13 @@ public class CandidateService{
         _rep = rep;
     }
 
-    public async Task<ResponseSearchParamsDTO> GetCandidateForParamsAsync(SearchParamsDTO params)
+    public async Task<ResponseSearchParamsDTO> GetCandidateForParamsAsync(RequestSearchParamsDTO searchParams)
     {
         try{
-        ResponseSearchParamsDTO response = await _rep.GetCandidateForParamsAsync(params);
+            ResponseSearchParamsDTO response = await _rep.GetCandidateForParamsAsync(searchParams);
+            return response;
         }catch{
-            
+            return new ResponseSearchParamsDTO();
         }
     }
 }
