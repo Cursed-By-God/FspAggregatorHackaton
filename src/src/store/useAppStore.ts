@@ -11,6 +11,8 @@ import type {
 import { MOCK_CANDIDATES } from '../data/mockCandidates';
 import { INITIAL_OFFERS } from '../data/mockOffers';
 
+import { api, USE_REAL_BACKEND } from '../services/api';
+
 export interface EmployerNeed {
   teamName: string;
   description: string;
@@ -26,6 +28,11 @@ interface AppState {
 
   candidates: Candidate[];
   offers: JobOffer[];
+
+  // API Статусы
+  isLoadingCandidates: boolean;
+  candidatesError: string | null;
+  fetchCandidates: () => Promise<void>;
 
   // Модальные окна
   selectedCandidate: Candidate | null;
@@ -45,11 +52,12 @@ interface AppState {
   activeSmartNeed: EmployerNeed | null;
   openSmartMatchModal: () => void;
   closeSmartMatchModal: () => void;
-  applySmartMatch: (need: EmployerNeed) => void;
+  applySmartMatch: (need: EmployerNeed) => Promise<void>;
   clearSmartMatch: () => void;
 
   filters: CatalogFilterState;
   setSearchQuery: (query: string) => void;
+  toggleStackFilter: (tech: string) => void;
   toggleDisciplineFilter: (discipline: FspDiscipline) => void;
   toggleSportRankFilter: (rank: FspSportRank) => void;
   toggleGradeFilter: (grade: DeveloperGrade) => void;
@@ -58,15 +66,16 @@ interface AppState {
   setSortBy: (sort: CatalogFilterState['sortBy']) => void;
   resetFilters: () => void;
 
-  sendDirectOffer: (offer: Omit<JobOffer, 'id' | 'status' | 'sentAt'>) => void;
-  acceptOffer: (offerId: string) => void;
-  declineOffer: (offerId: string) => void;
+  sendDirectOffer: (offer: Omit<JobOffer, 'id' | 'status' | 'sentAt'>) => Promise<void>;
+  acceptOffer: (offerId: string) => Promise<void>;
+  declineOffer: (offerId: string) => Promise<void>;
 
   resetDemoState: () => void;
 }
 
 const DEFAULT_FILTERS: CatalogFilterState = {
   searchQuery: '',
+  stack: [],
   disciplines: [],
   sportRanks: [],
   grades: [],
@@ -76,12 +85,40 @@ const DEFAULT_FILTERS: CatalogFilterState = {
   sortBy: 'rating'
 };
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   roleMode: 'recruiter',
   setRoleMode: (mode) => set({ roleMode: mode }),
 
   candidates: MOCK_CANDIDATES,
   offers: INITIAL_OFFERS,
+
+  isLoadingCandidates: false,
+  candidatesError: null,
+
+  fetchCandidates: async () => {
+    set({ isLoadingCandidates: true, candidatesError: null });
+    try {
+      const filters = get().filters;
+      const data = await api.getCandidates({
+        search: filters.searchQuery,
+        stack: filters.stack,
+        disciplines: filters.disciplines,
+        sportRanks: filters.sportRanks,
+        grades: filters.grades,
+        maxSalary: filters.maxSalary
+      });
+      set({ candidates: data, isLoadingCandidates: false });
+    } catch (err: any) {
+      console.warn('Бэкенд недоступен, подставляем локальные моки:', err?.message || err);
+      set({ 
+        candidates: MOCK_CANDIDATES, 
+        isLoadingCandidates: false,
+        candidatesError: USE_REAL_BACKEND 
+          ? 'Сервер бэкенда (http://localhost:5198/api) недоступен. Работает демо-режим на фолбэк-данных.' 
+          : null 
+      });
+    }
+  },
 
   selectedCandidate: null,
   setSelectedCandidate: (candidate) => set({ selectedCandidate: candidate }),
@@ -121,23 +158,25 @@ export const useAppStore = create<AppState>((set) => ({
       return { candidates: updatedCandidates };
     }),
 
-  // Смарт-подбор
+  // Смарт-подбор через API
   isSmartMatchOpen: false,
   activeSmartNeed: null,
   openSmartMatchModal: () => set({ isSmartMatchOpen: true }),
   closeSmartMatchModal: () => set({ isSmartMatchOpen: false }),
 
-  applySmartMatch: (need) =>
-    set((state) => {
-      // Алгоритм ранжирования под потребность
+  applySmartMatch: async (need) => {
+    try {
+      const res = await api.smartMatch(need);
+      set({ candidates: res.candidates, activeSmartNeed: need });
+    } catch (err) {
+      console.warn('API smartMatch недоступен, выполняем расчет локально:', err);
+      const state = get();
       const scoredCandidates = state.candidates.map((candidate) => {
-        // 1. Совпадение стека
         const matchedTechs = candidate.primaryStack.filter((tech) =>
           need.requiredStack.some((req) => req.toLowerCase() === tech.toLowerCase())
         );
         const stackScore = (matchedTechs.length / Math.max(1, need.requiredStack.length)) * 50;
 
-        // 2. Бонус за ФСП и вступительный тест
         const fspBonus = candidate.fspProfile.hasHistory
           ? candidate.fspProfile.sportRank === 'МС' ? 35 : candidate.fspProfile.sportRank === 'КМС' ? 28 : 20
           : 15;
@@ -145,14 +184,9 @@ export const useAppStore = create<AppState>((set) => ({
 
         const totalMatchPercent = Math.min(99, Math.round(stackScore + fspBonus + testBonus));
 
-        // 3. Формирование уникального объяснения выдачи (Explainability)
-        let explanation = '';
-        if (candidate.fspProfile.hasHistory) {
-          const topAch = candidate.fspProfile.achievements[0]?.placeResult || 'Призер ФСП';
-          explanation = `Матчинг ${totalMatchPercent}%: ${topAch} (${candidate.fspProfile.sportRank}) + совпадение стека [${matchedTechs.join(', ') || 'базовый'}] + тест ${candidate.testSummary.score}/100`;
-        } else {
-          explanation = `Матчинг ${totalMatchPercent}%: Независимый тест платформы (${candidate.testSummary.score}/100) + релевантный опыт [${matchedTechs.join(', ') || 'профиль'}]`;
-        }
+        let explanation = candidate.fspProfile.hasHistory
+          ? `Матчинг ${totalMatchPercent}%: Призер ФСП (${candidate.fspProfile.sportRank}) + совпадение стека [${matchedTechs.join(', ') || 'базовый'}] + тест ${candidate.testSummary.score}/100`
+          : `Матчинг ${totalMatchPercent}%: Независимый тест платформы (${candidate.testSummary.score}/100) + релевантный опыт [${matchedTechs.join(', ') || 'профиль'}]`;
 
         return {
           ...candidate,
@@ -161,14 +195,14 @@ export const useAppStore = create<AppState>((set) => ({
         };
       });
 
-      // Сортируем по силе матчинга
       scoredCandidates.sort((a: any, b: any) => (b.smartScore || 0) - (a.smartScore || 0));
 
-      return {
+      set({
         candidates: scoredCandidates,
         activeSmartNeed: need
-      };
-    }),
+      });
+    }
+  },
 
   clearSmartMatch: () =>
     set({
@@ -179,6 +213,15 @@ export const useAppStore = create<AppState>((set) => ({
   filters: DEFAULT_FILTERS,
   setSearchQuery: (query) => 
     set((state) => ({ filters: { ...state.filters, searchQuery: query } })),
+
+  toggleStackFilter: (tech) =>
+    set((state) => {
+      const exists = state.filters.stack.includes(tech);
+      const updated = exists
+        ? state.filters.stack.filter((t) => t !== tech)
+        : [...state.filters.stack, tech];
+      return { filters: { ...state.filters, stack: updated } };
+    }),
 
   toggleDisciplineFilter: (discipline) =>
     set((state) => {
@@ -218,34 +261,55 @@ export const useAppStore = create<AppState>((set) => ({
 
   resetFilters: () => set({ filters: DEFAULT_FILTERS }),
 
-  sendDirectOffer: (offerData) =>
-    set((state) => {
-      const newOffer: JobOffer = {
+  sendDirectOffer: async (offerData) => {
+    try {
+      const newOffer = await api.sendOffer(offerData);
+      set((state) => ({
+        offers: [newOffer, ...state.offers],
+        isOfferModalOpen: false,
+        offerTargetCandidate: null
+      }));
+    } catch (err) {
+      console.warn('API sendOffer недоступен, сохраняем оффер локально:', err);
+      const fallbackOffer: JobOffer = {
         ...offerData,
         id: `off-${Date.now()}`,
         status: 'pending',
         sentAt: 'Только что'
       };
-      return {
-        offers: [newOffer, ...state.offers],
+      set((state) => ({
+        offers: [fallbackOffer, ...state.offers],
         isOfferModalOpen: false,
         offerTargetCandidate: null
-      };
-    }),
+      }));
+    }
+  },
 
-  acceptOffer: (offerId) =>
+  acceptOffer: async (offerId) => {
+    try {
+      await api.updateOfferStatus(offerId, 'accepted');
+    } catch (err) {
+      console.warn('API updateOfferStatus недоступен:', err);
+    }
     set((state) => ({
       offers: state.offers.map((offer) =>
         offer.id === offerId ? { ...offer, status: 'accepted' as const } : offer
       )
-    })),
+    }));
+  },
 
-  declineOffer: (offerId) =>
+  declineOffer: async (offerId) => {
+    try {
+      await api.updateOfferStatus(offerId, 'declined');
+    } catch (err) {
+      console.warn('API updateOfferStatus недоступен:', err);
+    }
     set((state) => ({
       offers: state.offers.map((offer) =>
         offer.id === offerId ? { ...offer, status: 'declined' as const } : offer
       )
-    })),
+    }));
+  },
 
   resetDemoState: () =>
     set({
@@ -258,6 +322,8 @@ export const useAppStore = create<AppState>((set) => ({
       isTestModalOpen: false,
       isSmartMatchOpen: false,
       activeSmartNeed: null,
-      filters: DEFAULT_FILTERS
+      filters: DEFAULT_FILTERS,
+      candidatesError: null,
+      isLoadingCandidates: false
     })
 }));

@@ -4,7 +4,7 @@ import { INITIAL_OFFERS } from '../data/mockOffers';
 
 // ФЛАГ ПЕРЕКЛЮЧЕНИЯ: когда бэкендер поднимет сервер, меняем на true
 export const USE_REAL_BACKEND = true;
-export const API_BASE_URL = 'http://localhost:8000/api';
+export const API_BASE_URL = 'http://localhost:5198/api';
 
 export const api = {
   // 1. Получение каталога кандидатов с фильтрами
@@ -12,7 +12,20 @@ export const api = {
     if (!USE_REAL_BACKEND) {
       return Promise.resolve(MOCK_CANDIDATES);
     }
-    const query = new URLSearchParams(params).toString();
+    const searchParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          if (value.length > 0) {
+            // Отправка стека через запятую или повторяющийся параметр stack=C++&stack=Go
+            value.forEach((val) => searchParams.append(key, val));
+          }
+        } else if (value !== undefined && value !== null && value !== '') {
+          searchParams.append(key, value);
+        }
+      });
+    }
+    const query = searchParams.toString();
     const res = await fetch(`${API_BASE_URL}/candidates${query ? `?${query}` : ''}`);
     if (!res.ok) throw new Error('Не удалось получить список кандидатов');
     return res.json();
