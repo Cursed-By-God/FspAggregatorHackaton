@@ -4,7 +4,7 @@ import { INITIAL_OFFERS } from '../data/mockOffers';
 
 // ФЛАГ ПЕРЕКЛЮЧЕНИЯ: когда бэкендер поднимет сервер, меняем на true
 export const USE_REAL_BACKEND = true;
-export const API_BASE_URL = 'http://localhost:5192/api';
+export const API_BASE_URL = 'http://localhost:5198/api';
 
 export const api = {
   // 1. Получение каталога кандидатов с фильтрами
