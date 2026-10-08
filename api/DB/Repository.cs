@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 public class Repository {
 
     private DbContextFsp _db;
@@ -53,10 +55,103 @@ public class Repository {
         }
 
         if(!string.IsNullOrEmpty(searchParams.Discipline)){
-            
+            var disciplines = searchParams.Discipline
+            .Split(",")
+            .Select(d => d.ToLower().Trim())
+            .Where(d => !string.IsNullOrEmpty(d))
+            .ToList();
+
+            //делаем выборку И
+            foreach(var discipline in disciplines){
+                query = query.Where(c => c.FspAchivements.Any(a => a.Discipline.ToLower().Contains(discipline)));
+            }
         }
 
-        return new ResponseSearchParamsDTO { Candidates = query.ToList() };
+        if(!string.IsNullOrEmpty(searchParams.SportRank)){
+            var ranks = searchParams.SportRank
+            .Split(",")
+            .Select(r => r.ToLower().Trim())
+            .Where(r => !string.IsNullOrEmpty(r))
+            .ToList();
+
+            // Логика ИЛИ 
+            query = query.Where(c => ranks.Contains(c.FspSportRang.ToLower()));
+        }
+
+        if(!string.IsNullOrEmpty(searchParams.Grade)){
+            var grades = searchParams.Grade
+            .Split(",")
+            .Select(g => g.ToLower().Trim())
+            .Where(g => !string.IsNullOrEmpty(g))
+            .ToList();
+            
+            query = query.Where(c => grades.Any(g => g.Contains(c.Grade.ToLower())));
+        }
+
+        if(searchParams.MaxSalary != null){
+            query = query.Where(c => c.SalaryMin <= searchParams.MaxSalary);
+        }
+
+        if(searchParams.HasFsp != null && searchParams.HasFsp == true){
+            query = query.Where(c => c.FspId != null && c.FspId != "");
+        }
+
+        if(!string.IsNullOrEmpty(searchParams.SortBy)){
+            switch(searchParams.SortBy.ToLower().Trim()){
+                case "rating":
+                    query = query.OrderByDescending(c => c.FspRatingScore);
+                    break;
+                case "salary_asc":
+                    query = query.OrderBy(c => c.SalaryMin);
+                    break;
+                case "salary_desc":
+                    query = query.OrderByDescending(c => c.SalaryMin);
+                    break;
+                default:
+                    query = query.OrderByDescending(c => c.FspRatingScore);
+                    break;
+            }
+        }
+
+        
+        int page = searchParams.Page ?? 1;
+        int pageSize = searchParams.PageSize ?? 20;
+
+        return new ResponseSearchParamsDTO { 
+            Candidates = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(),
+            ErrorCount = 0
+        };
+    }
+
+    public async Task AddCandiateAsync(RequestAddCandiate candiate){
+        CandidatesEntity candidate = new CandidatesEntity();
+        candidate.FullName = candiate.FullName;
+        candidate.AvaaterURL = candiate.AvaaterURL;
+        candidate.Handle = candiate.Handle;
+        candidate.City = candiate.City;
+        candidate.Grade = candiate.Grade;
+        candidate.CategorySpecialization = candiate.CategorySpecialization;
+        candidate.SalaryMax = candiate.SalaryMax;
+        candidate.SalaryMin = candiate.SalaryMin;
+        candidate.PrimaryStack = candiate.PrimaryStack;
+        candidate.Bio = candiate.Bio;
+        candidate.IsOpenToOffers = candiate.IsOpenToOffers;
+        candidate.TestIsPassed = candiate.TestIsPassed;
+        candidate.TestedGrade = candiate.TestedGrade;
+        candidate.TestPassedAt = candiate.TestPassedAt;
+        candidate.TestCoolDownUntil = candiate.TestCoolDownUntil;
+        candidate.Telegram = candiate.Telegram;
+        candidate.Email = candiate.Email;
+        candidate.Phone = candiate.Phone;
+        candidate.FspId = candiate.FspId;
+        candidate.FspSportRang = candiate.FspSportRang;
+        candidate.FspRatingScore = candiate.FspRatingScore;
+        
+        _db.Candidates.Add(candidate);
+        await _db.SaveChangesAsync();
     }
 
 }

@@ -11,7 +11,13 @@ public class CandidateService{
             ResponseSearchParamsDTO response = await _rep.GetCandidateForParamsAsync(searchParams);
             return response;
         }catch{
-            return new ResponseSearchParamsDTO();
+            return new ResponseSearchParamsDTO {ErrorCount = 1};
         }
+    }
+
+    public async Task AddCandiateAsync(RequestAddCandiate candiate){
+        await _rep.AddCandiateAsync(candiate);
+
+        return;
     }
 }
