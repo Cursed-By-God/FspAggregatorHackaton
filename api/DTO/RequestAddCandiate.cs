@@ -1,4 +1,4 @@
-public class CandidatesEntity {
+public class RequestAddCandiate{
     public int Id {get; set;} 
     public string FullName {get; set;}
     public string AvaaterURL {get; set;}
@@ -21,9 +21,4 @@ public class CandidatesEntity {
     public string FspId {get; set;}
     public string FspSportRang {get; set;}
     public int FspRatingScore {get; set;}
-
-    public List<FspAchivementsEntity> FspAchivements {get; set;} = new List<FspAchivementsEntity>();
-    public List<RadarSkillsEntity> RadarSkills {get; set;} = new List<RadarSkillsEntity>();
-    public List<JobOffersEntity> JobOffers {get; set;} = new List<JobOffersEntity>();
-
 }
