@@ -1,5 +1,5 @@
 public class JobOffersEntity{
-    public int id {get; set;}
+    public int Id {get; set;}
     public int CandidateId {get; set;}
     public int CompanyId {get; set;}
     public string PositionTitle {get; set;} 

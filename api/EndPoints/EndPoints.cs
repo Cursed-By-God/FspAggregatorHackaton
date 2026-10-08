@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 public static class EndPoints{
     public static void AddEndPoints(this WebApplication app){
 
@@ -14,11 +16,12 @@ public static class EndPoints{
             [FromQuery] bool? hasFsp,
             [FromQuery] string? sortBy
         ) => {
-            SearchParamsDTO searchParams = new SearchParamsDTO{
+            RequestSearchParamsDTO searchParams = new RequestSearchParamsDTO{
                 Page = page,
                 PageSize = pageSize,
                 SearchQuery = searchQuery,
                 Category = category,
+                Stack = stack,
                 Discipline = discipline,
                 SportRank = sportRank,
                 Grade = grade,

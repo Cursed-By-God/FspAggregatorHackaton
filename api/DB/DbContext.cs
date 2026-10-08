@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+
 public class DbContextFsp: DbContext {
-    DbSet<CandidatesEntity> Candidates {get; set;}
+    public DbContextFsp(DbContextOptions<DbContextFsp> options) : base(options) {}
+
+    public DbSet<CandidatesEntity> Candidates {get; set;}
     DbSet<FspAchivementsEntity> FspAchivements {get; set;}
     DbSet<RadarSkillsEntity> RadarSkills {get; set;}
     DbSet<JobOffersEntity> JobOffers {get; set;}

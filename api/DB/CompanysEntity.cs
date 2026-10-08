@@ -8,7 +8,7 @@ public class CompanyEntity {
     public string Country {get; set;}
     public string City {get; set;}
     public string Street {get; set;}
-    public boolean IsVerified {get; set;}
+    public bool IsVerified {get; set;}
 
     public List<JobOffersEntity> JobOffers {get; set;}= new List<JobOffersEntity>();
 }
