@@ -114,7 +114,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         candidates: MOCK_CANDIDATES, 
         isLoadingCandidates: false,
         candidatesError: USE_REAL_BACKEND 
-          ? 'Сервер бэкенда (http://localhost:8000/api) недоступен. Работает демо-режим на фолбэк-данных.' 
+          ? 'Сервер бэкенда (http://localhost:5192/api) недоступен. Работает демо-режим на фолбэк-данных.' 
           : null 
       });
     }
