@@ -137,3 +137,28 @@ export interface CatalogFilterState {
 }
 
 export type ActiveRoleMode = 'recruiter' | 'candidate';
+
+// DTO для создания кандидата / отправки резюме (POST /api/candidates)
+export interface RequestAddCandidate {
+  fullName: string;
+  handle: string;
+  city: string;
+  grade: string;                 // Заявленный грейд
+  categorySpecialization: string[];
+  salaryMax: number;
+  salaryMin: number;
+  primaryStack: string[];
+  bio: string;
+  isOpenToOffers: boolean;
+  
+  testIsPassed: boolean;         // Обязательно (по ТЗ грейд дает тест)
+  testedGrade: string; 
+  testPassedAt: string;          // Даты в ISO "2026-10-08T12:00:00Z"
+  testCoolDownUntil: string;
+  
+  telegram: string;
+  email: string;
+  phone: string;
+  
+  fspId?: string;                // Если кандидат указал свой FSP ID
+}

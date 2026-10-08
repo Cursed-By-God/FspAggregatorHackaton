@@ -1,4 +1,4 @@
-import type { Candidate, JobOffer } from '../types';
+import type { Candidate, JobOffer, RequestAddCandidate } from '../types';
 import { MOCK_CANDIDATES } from '../data/mockCandidates';
 import { INITIAL_OFFERS } from '../data/mockOffers';
 
@@ -7,7 +7,7 @@ export const USE_REAL_BACKEND = true;
 export const API_BASE_URL = 'http://localhost:5198/api';
 
 export const api = {
-  // 1. Получение каталога кандидатов с фильтрами
+  // 1. Получение каталога кандидатов с фильтрами (C# бэкенд ожидает массивы через запятую)
   async getCandidates(params?: Record<string, any>): Promise<Candidate[]> {
     if (!USE_REAL_BACKEND) {
       return Promise.resolve(MOCK_CANDIDATES);
@@ -17,11 +17,11 @@ export const api = {
       Object.entries(params).forEach(([key, value]) => {
         if (Array.isArray(value)) {
           if (value.length > 0) {
-            // Отправка стека через запятую или повторяющийся параметр stack=C++&stack=Go
-            value.forEach((val) => searchParams.append(key, val));
+            // Бэкенд сплитит строку по запятой!
+            searchParams.append(key, value.join(','));
           }
-        } else if (value !== undefined && value !== null && value !== '') {
-          searchParams.append(key, value);
+        } else if (value !== undefined && value !== null && value !== '' && value !== false) {
+          searchParams.append(key, String(value));
         }
       });
     }
@@ -31,7 +31,33 @@ export const api = {
     return res.json();
   },
 
-  // 2. Отправка прямого оффера (Обратный найм)
+  // 2. Создание кандидата / регистрация соискателя (POST /api/candidates)
+  async addCandidate(candidateData: RequestAddCandidate): Promise<Candidate> {
+    if (!USE_REAL_BACKEND) {
+      const mockCreated: Candidate = {
+        ...MOCK_CANDIDATES[0],
+        id: `cand-${Date.now()}`,
+        fullName: candidateData.fullName,
+        handle: candidateData.handle,
+        city: candidateData.city,
+        grade: candidateData.grade as any,
+        salaryMin: candidateData.salaryMin,
+        salaryMax: candidateData.salaryMax,
+        bio: candidateData.bio,
+        primaryStack: candidateData.primaryStack
+      };
+      return Promise.resolve(mockCreated);
+    }
+    const res = await fetch(`${API_BASE_URL}/candidates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(candidateData)
+    });
+    if (!res.ok) throw new Error('Ошибка создания кандидата');
+    return res.json();
+  },
+
+  // 3. Отправка прямого оффера (Обратный найм)
   async sendOffer(offerData: Omit<JobOffer, 'id' | 'status' | 'sentAt'>): Promise<JobOffer> {
     if (!USE_REAL_BACKEND) {
       const mockOffer: JobOffer = {
@@ -51,7 +77,7 @@ export const api = {
     return res.json();
   },
 
-  // 3. Изменение статуса оффера (Принять / Отклонить)
+  // 4. Изменение статуса оффера (Принять / Отклонить)
   async updateOfferStatus(offerId: string, status: 'accepted' | 'declined'): Promise<{ status: string }> {
     if (!USE_REAL_BACKEND) {
       return Promise.resolve({ status });
@@ -65,7 +91,7 @@ export const api = {
     return res.json();
   },
 
-  // 4. Смарт-подбор по потребности команды (35% ТЗ)
+  // 5. Смарт-подбор по потребности команды (35% ТЗ)
   async smartMatch(need: {
     teamName: string;
     description: string;
@@ -91,7 +117,7 @@ export const api = {
     return res.json();
   },
 
-  // 5. Симуляция запроса к реестру ФСП
+  // 6. Симуляция запроса к реестру ФСП
   async syncFsp(candidateId: string): Promise<{ success: boolean; message: string }> {
     if (!USE_REAL_BACKEND) {
       return new Promise((resolve) => {

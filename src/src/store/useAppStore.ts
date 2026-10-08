@@ -6,7 +6,8 @@ import type {
   ActiveRoleMode, 
   FspDiscipline, 
   FspSportRank, 
-  DeveloperGrade 
+  DeveloperGrade,
+  RequestAddCandidate 
 } from '../types';
 import { MOCK_CANDIDATES } from '../data/mockCandidates';
 import { INITIAL_OFFERS } from '../data/mockOffers';
@@ -33,6 +34,7 @@ interface AppState {
   isLoadingCandidates: boolean;
   candidatesError: string | null;
   fetchCandidates: () => Promise<void>;
+  addCandidate: (candidateData: RequestAddCandidate) => Promise<Candidate | null>;
 
   // Модальные окна
   selectedCandidate: Candidate | null;
@@ -100,12 +102,14 @@ export const useAppStore = create<AppState>((set, get) => ({
     try {
       const filters = get().filters;
       const data = await api.getCandidates({
-        search: filters.searchQuery,
+        searchQuery: filters.searchQuery,
         stack: filters.stack,
-        disciplines: filters.disciplines,
-        sportRanks: filters.sportRanks,
-        grades: filters.grades,
-        maxSalary: filters.maxSalary
+        discipline: filters.disciplines,
+        sportRank: filters.sportRanks,
+        grade: filters.grades,
+        maxSalary: filters.maxSalary,
+        hasFsp: filters.onlyVerifiedFsp,
+        sortBy: filters.sortBy
       });
       set({ candidates: data, isLoadingCandidates: false });
     } catch (err: any) {
@@ -117,6 +121,17 @@ export const useAppStore = create<AppState>((set, get) => ({
           ? 'Сервер бэкенда (http://localhost:5198/api) недоступен. Работает демо-режим на фолбэк-данных.' 
           : null 
       });
+    }
+  },
+
+  addCandidate: async (candidateData) => {
+    try {
+      const newCand = await api.addCandidate(candidateData);
+      set((state) => ({ candidates: [newCand, ...state.candidates] }));
+      return newCand;
+    } catch (err) {
+      console.warn('API addCandidate недоступен:', err);
+      return null;
     }
   },
 
