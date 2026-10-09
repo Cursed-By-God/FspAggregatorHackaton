@@ -7,12 +7,13 @@ import {
   Zap,
   Terminal,
   ShieldAlert,
-  Flame
+  Flame,
+  FileText
 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 
 export const Header: React.FC = () => {
-  const { roleMode, setRoleMode, offers, candidates } = useAppStore();
+  const { roleMode, setRoleMode, offers, candidates, openCreateCandidateModal } = useAppStore();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -55,35 +56,45 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Центральный B2B-переключатель ролей */}
-        <div className="flex items-center p-1 bg-obsidian-sub/90 border border-white/10 rounded-2xl shadow-inner">
+        {/* Центральный B2B-переключатель ролей и кнопка создания резюме */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center p-1 bg-obsidian-sub/90 border border-white/10 rounded-2xl shadow-inner">
+            <button
+              onClick={() => setRoleMode('recruiter')}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs font-mono font-extrabold transition-all duration-300 ${
+                roleMode === 'recruiter'
+                  ? 'bg-gradient-to-r from-crimson to-red-600 text-white shadow-glow-crimson'
+                  : 'text-chalk-muted hover:text-white'
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              <span>СКАУТ-ЦЕНТР</span>
+            </button>
+            
+            <button
+              onClick={() => setRoleMode('candidate')}
+              className={`flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs font-mono font-extrabold transition-all duration-300 ${
+                roleMode === 'candidate'
+                  ? 'bg-white text-black shadow-lg'
+                  : 'text-chalk-muted hover:text-white'
+              }`}
+            >
+              <Terminal className="w-4 h-4" />
+              <span>АТЛЕТ ФСП</span>
+              {pendingOffers.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-crimson text-white font-extrabold shadow-glow-crimson-sm">
+                  {pendingOffers.length}
+                </span>
+              )}
+            </button>
+          </div>
+
           <button
-            onClick={() => setRoleMode('recruiter')}
-            className={`flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs font-mono font-extrabold transition-all duration-300 ${
-              roleMode === 'recruiter'
-                ? 'bg-gradient-to-r from-crimson to-red-600 text-white shadow-glow-crimson'
-                : 'text-chalk-muted hover:text-white'
-            }`}
+            onClick={openCreateCandidateModal}
+            className="hidden md:flex items-center gap-1.5 px-4 py-2 rounded-xl bg-obsidian-card hover:bg-obsidian-sub text-neon-cyan hover:text-white border border-neon-cyan/40 text-xs font-mono font-bold transition-all shadow-glow-cyan/10"
           >
-            <Zap className="w-4 h-4" />
-            <span>СКАУТ-ЦЕНТР</span>
-          </button>
-          
-          <button
-            onClick={() => setRoleMode('candidate')}
-            className={`flex items-center gap-2 px-4 sm:px-6 py-2 rounded-xl text-xs font-mono font-extrabold transition-all duration-300 ${
-              roleMode === 'candidate'
-                ? 'bg-white text-black shadow-lg'
-                : 'text-chalk-muted hover:text-white'
-            }`}
-          >
-            <Terminal className="w-4 h-4" />
-            <span>АТЛЕТ ФСП</span>
-            {pendingOffers.length > 0 && (
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-crimson text-white font-extrabold shadow-glow-crimson-sm">
-                {pendingOffers.length}
-              </span>
-            )}
+            <FileText className="w-4 h-4" />
+            <span>+ РАЗМЕСТИТЬ РЕЗЮМЕ</span>
           </button>
         </div>
 

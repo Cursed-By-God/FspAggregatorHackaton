@@ -49,6 +49,11 @@ interface AppState {
   closeTestModal: () => void;
   completeTest: (newScore: number, newGrade: DeveloperGrade, specialization: string) => void;
 
+  // Создание профиля / Отправка резюме (POST /api/candidates)
+  isCreateCandidateOpen: boolean;
+  openCreateCandidateModal: () => void;
+  closeCreateCandidateModal: () => void;
+
   // Смарт-подборка по потребности (Шаг 3)
   isSmartMatchOpen: boolean;
   activeSmartNeed: EmployerNeed | null;
@@ -146,6 +151,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   isTestModalOpen: false,
   openTestModal: () => set({ isTestModalOpen: true }),
   closeTestModal: () => set({ isTestModalOpen: false }),
+
+  isCreateCandidateOpen: false,
+  openCreateCandidateModal: () => set({ isCreateCandidateOpen: true }),
+  closeCreateCandidateModal: () => set({ isCreateCandidateOpen: false }),
+
   completeTest: (newScore, newGrade, specialization) =>
     set((state) => {
       const updatedCandidates = state.candidates.map((c, index) => {

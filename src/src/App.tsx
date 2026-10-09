@@ -18,6 +18,7 @@ import { OfferModal } from './components/OfferModal';
 import { CandidateDashboard } from './components/CandidateDashboard';
 import { SkillTestModal } from './components/SkillTestModal';
 import { SmartMatchModal } from './components/SmartMatchModal';
+import { CreateCandidateModal } from './components/CreateCandidateModal';
 import { DemoToolbar } from './components/DemoToolbar';
 import { useAppStore } from './store/useAppStore';
 
@@ -31,6 +32,7 @@ export default function App() {
     selectedCandidate, 
     isOfferModalOpen,
     isTestModalOpen,
+    isCreateCandidateOpen,
     isSmartMatchOpen,
     openSmartMatchModal,
     activeSmartNeed,
@@ -265,6 +267,7 @@ export default function App() {
       {isOfferModalOpen && <OfferModal />}
       {isTestModalOpen && <SkillTestModal />}
       {isSmartMatchOpen && <SmartMatchModal />}
+      {isCreateCandidateOpen && <CreateCandidateModal />}
 
       <DemoToolbar />
 

@@ -13,7 +13,8 @@ import {
   Check,
   TrendingUp,
   Award,
-  Sparkles
+  Sparkles,
+  FileText
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useAppStore } from '../store/useAppStore';
@@ -25,7 +26,8 @@ export const CandidateDashboard: React.FC = () => {
     acceptOffer, 
     declineOffer, 
     setSelectedCandidate,
-    openTestModal 
+    openTestModal,
+    openCreateCandidateModal
   } = useAppStore();
 
   const athlete = candidates[0] || null;
@@ -118,6 +120,14 @@ export const CandidateDashboard: React.FC = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <button
+              onClick={openCreateCandidateModal}
+              className="px-5 py-3 rounded-2xl bg-gradient-to-r from-crimson-600 to-neon-purple text-white text-xs font-mono font-bold flex items-center justify-center gap-2 shadow-glow-crimson hover:scale-105 transition-all uppercase tracking-wider"
+            >
+              <FileText className="w-4 h-4" />
+              <span>РАЗМЕСТИТЬ РЕЗЮМЕ</span>
+            </button>
+
             <button
               onClick={handleFspSync}
               disabled={isSyncing}
