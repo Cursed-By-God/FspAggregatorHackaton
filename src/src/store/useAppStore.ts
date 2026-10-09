@@ -64,6 +64,7 @@ interface AppState {
 
   filters: CatalogFilterState;
   setSearchQuery: (query: string) => void;
+  toggleCategoryFilter: (category: string) => void;
   toggleStackFilter: (tech: string) => void;
   toggleDisciplineFilter: (discipline: FspDiscipline) => void;
   toggleSportRankFilter: (rank: FspSportRank) => void;
@@ -71,7 +72,14 @@ interface AppState {
   setSalaryRange: (min: number, max: number) => void;
   toggleOnlyVerifiedFsp: () => void;
   setSortBy: (sort: CatalogFilterState['sortBy']) => void;
+  setPage: (page: number) => void;
+  setPageSize: (pageSize: number) => void;
   resetFilters: () => void;
+
+  // Умный ИИ-поиск (/api/smartSearch)
+  smartSearchText: string;
+  triggerSmartSearch: (text: string) => Promise<void>;
+  clearSmartSearchText: () => void;
 
   sendDirectOffer: (offer: Omit<JobOffer, 'id' | 'status' | 'sentAt'>) => Promise<void>;
   acceptOffer: (offerId: string) => Promise<void>;
@@ -81,7 +89,10 @@ interface AppState {
 }
 
 const DEFAULT_FILTERS: CatalogFilterState = {
+  page: 1,
+  pageSize: 20,
   searchQuery: '',
+  categories: [],
   stack: [],
   disciplines: [],
   sportRanks: [],
@@ -102,18 +113,35 @@ export const useAppStore = create<AppState>((set, get) => ({
   isLoadingCandidates: false,
   candidatesError: null,
 
+  smartSearchText: '',
+
   fetchCandidates: async () => {
     set({ isLoadingCandidates: true, candidatesError: null });
     try {
       const filters = get().filters;
       const data = await api.getCandidates({
-        searchQuery: filters.searchQuery,
-        stack: filters.stack,
-        discipline: filters.disciplines,
-        sportRank: filters.sportRanks,
-        grade: filters.grades,
-        maxSalary: filters.maxSalary,
-        hasFsp: filters.onlyVerifiedFsp,
+        // Передаем параметры согласно C# DTO: Page, PageSize, SearchQuery, Category, Stack, Discipline, SportRank, Grade, MaxSalary, HasFsp, SortBy
+        Page: filters.page || 1,
+        page: filters.page || 1,
+        PageSize: filters.pageSize || 20,
+        pageSize: filters.pageSize || 20,
+        SearchQuery: filters.searchQuery || undefined,
+        searchQuery: filters.searchQuery || undefined,
+        Category: filters.categories.length > 0 ? filters.categories : undefined,
+        category: filters.categories.length > 0 ? filters.categories : undefined,
+        Stack: filters.stack.length > 0 ? filters.stack : undefined,
+        stack: filters.stack.length > 0 ? filters.stack : undefined,
+        Discipline: filters.disciplines.length > 0 ? filters.disciplines : undefined,
+        discipline: filters.disciplines.length > 0 ? filters.disciplines : undefined,
+        SportRank: filters.sportRanks.length > 0 ? filters.sportRanks : undefined,
+        sportRank: filters.sportRanks.length > 0 ? filters.sportRanks : undefined,
+        Grade: filters.grades.length > 0 ? filters.grades : undefined,
+        grade: filters.grades.length > 0 ? filters.grades : undefined,
+        MaxSalary: filters.maxSalary < 600000 ? filters.maxSalary : undefined,
+        maxSalary: filters.maxSalary < 600000 ? filters.maxSalary : undefined,
+        HasFsp: filters.onlyVerifiedFsp ? true : undefined,
+        hasFsp: filters.onlyVerifiedFsp ? true : undefined,
+        SortBy: filters.sortBy,
         sortBy: filters.sortBy
       });
       set({ candidates: data, isLoadingCandidates: false });
@@ -127,6 +155,34 @@ export const useAppStore = create<AppState>((set, get) => ({
           : null 
       });
     }
+  },
+
+  triggerSmartSearch: async (text: string) => {
+    if (!text.trim()) {
+      set({ smartSearchText: '' });
+      get().fetchCandidates();
+      return;
+    }
+    set({ isLoadingCandidates: true, candidatesError: null, smartSearchText: text });
+    try {
+      const data = await api.smartSearch(text);
+      set({ candidates: data, isLoadingCandidates: false });
+    } catch (err) {
+      console.warn('API smartSearch недоступен, выполняем локально:', err);
+      const q = text.toLowerCase();
+      const filtered = MOCK_CANDIDATES.filter(c => 
+        c.fullName.toLowerCase().includes(q) ||
+        c.headline.toLowerCase().includes(q) ||
+        c.bio.toLowerCase().includes(q) ||
+        c.primaryStack.some(s => s.toLowerCase().includes(q))
+      );
+      set({ candidates: filtered, isLoadingCandidates: false });
+    }
+  },
+
+  clearSmartSearchText: () => {
+    set({ smartSearchText: '' });
+    get().fetchCandidates();
   },
 
   addCandidate: async (candidateData) => {
@@ -239,6 +295,15 @@ export const useAppStore = create<AppState>((set, get) => ({
   setSearchQuery: (query) => 
     set((state) => ({ filters: { ...state.filters, searchQuery: query } })),
 
+  toggleCategoryFilter: (cat) =>
+    set((state) => {
+      const exists = state.filters.categories.includes(cat);
+      const updated = exists
+        ? state.filters.categories.filter((c) => c !== cat)
+        : [...state.filters.categories, cat];
+      return { filters: { ...state.filters, categories: updated } };
+    }),
+
   toggleStackFilter: (tech) =>
     set((state) => {
       const exists = state.filters.stack.includes(tech);
@@ -283,6 +348,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setSortBy: (sortBy) =>
     set((state) => ({ filters: { ...state.filters, sortBy } })),
+
+  setPage: (page) =>
+    set((state) => ({ filters: { ...state.filters, page } })),
+
+  setPageSize: (pageSize) =>
+    set((state) => ({ filters: { ...state.filters, pageSize } })),
 
   resetFilters: () => set({ filters: DEFAULT_FILTERS }),
 

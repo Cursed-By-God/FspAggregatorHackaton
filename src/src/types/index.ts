@@ -125,7 +125,10 @@ export interface JobOffer {
 
 // Фильтры каталога
 export interface CatalogFilterState {
+  page: number;
+  pageSize: number;
   searchQuery: string;
+  categories: string[];
   stack: string[];               // Отдельный query-параметр стека (C++, Go, Python, etc.)
   disciplines: FspDiscipline[];
   sportRanks: FspSportRank[];

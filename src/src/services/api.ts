@@ -132,5 +132,30 @@ export const api = {
     const res = await fetch(`${API_BASE_URL}/fsp/sync/${candidateId}`, { method: 'POST' });
     if (!res.ok) throw new Error('Ошибка синхронизации с ФСП');
     return res.json();
+  },
+
+  // 7. Умный ИИ-поиск по естественному языку (GET/POST /api/smartSearch)
+  async smartSearch(queryText: string): Promise<Candidate[]> {
+    if (!USE_REAL_BACKEND) {
+      const q = queryText.toLowerCase();
+      const mockResult = MOCK_CANDIDATES.filter(c => 
+        c.fullName.toLowerCase().includes(q) ||
+        c.headline.toLowerCase().includes(q) ||
+        c.bio.toLowerCase().includes(q) ||
+        c.primaryStack.some(s => s.toLowerCase().includes(q))
+      );
+      return Promise.resolve(mockResult.length > 0 ? mockResult : MOCK_CANDIDATES);
+    }
+    const res = await fetch(`${API_BASE_URL}/smartSearch?query=${encodeURIComponent(queryText)}`);
+    if (!res.ok) {
+      const postRes = await fetch(`${API_BASE_URL}/smartSearch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: queryText, text: queryText })
+      });
+      if (!postRes.ok) throw new Error('Ошибка умного поиска');
+      return postRes.json();
+    }
+    return res.json();
   }
 };
